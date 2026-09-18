@@ -7,10 +7,14 @@ import { connectMongoDB } from './db/connectMongoDB.js';
 import { logger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import notesRouter from './routes/notesRoutes.js'
+
+
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
+app.use(notesRouter)
 app.use(pinoHttp());
 app.use(logger);         // 1. Логер першим — бачить усі запити
 app.use(express.json()); // 2. Парсинг JSON-тіла

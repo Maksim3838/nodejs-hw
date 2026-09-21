@@ -2,10 +2,33 @@
 import createHttpError from 'http-errors'
 import Note from '../models/note.js'
 
-export const getAllNotes = async (req, res) => {
-  const notes = await Note.find()
+export const getAllNotes = async (req, res, next) => {
+  try {
+    const { tag, search } = req.query
 
-  res.status(200).json(notes)
+    const myQuery = Note.find()
+
+    if (tag) {
+      myQuery.where({ tag })
+    }
+
+    if (search) {
+      myQuery.where({
+        $or: [
+          { title: { $regex: search, $options: 'i' } },
+          { content: { $regex: search, $options: 'i' } },
+        ],
+      })
+    }
+
+    const notes = await myQuery.exec()
+
+    res.status(200).json({
+      notes,
+    })
+  } catch (error) {
+    next(error)
+  }
 }
 
 export const getNoteById = async (req, res) => {

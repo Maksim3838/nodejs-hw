@@ -1,4 +1,4 @@
-```js
+
 import mongoose from 'mongoose'
 
 import { TAGS } from '../constants/tags.js'
@@ -29,4 +29,3 @@ const noteSchema = new mongoose.Schema(
 noteSchema.index({ tag: 1 })
 
 export default mongoose.model('Note', noteSchema)
-```

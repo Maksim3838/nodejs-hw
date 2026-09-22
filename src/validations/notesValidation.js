@@ -1,32 +1,57 @@
-import { Joi, Segments } from 'celebrate';
+import { Segments, Joi } from 'celebrate'
+import { isValidObjectId } from 'mongoose'
 
-export const createStudentSchema = {
-  [Segments.BODY]: Joi.object({
-    name: Joi.string().min(3).max(30).required().messages({
-      "string.base": "Name must be a string",
-      "string.min": "Name should have at least {#limit} characters",
-      "string.max": "Name should have at most {#limit} characters",
-      "any.required": "Name is required",
-    }),
-    age: Joi.number().integer().min(12).max(65).required().messages({
-      "number.base": "Age must be a number",
-      "number.min": "Age must be at least {#limit}",
-      "number.max": "Age must be at most {#limit}",
-      "any.required": "Age is required",
-    }),
-    gender: Joi.string().valid("male", "female", "other").required().messages({
-      "any.only": "Gender must be one of: male, female, or other",
-      "any.required": "Gender is required",
-    }),
-    avgMark: Joi.number().min(2).max(12).required().messages({
-      "number.base": "Average mark must be a number",
-      "number.min": "Average mark must be at least {#limit}",
-      "number.max": "Average mark must be at most {#limit}",
-      "any.required": "Average mark is required",
-    }),
-    onDuty: Joi.boolean().messages({
-      "boolean.base": "onDuty must be a boolean value",
-    }),
+import { TAGS } from '../constants/tags.js'
+
+const objectIdValidation = Joi.string().custom((value, helpers) => {
+  if (!isValidObjectId(value)) {
+    return helpers.message('Invalid note ID')
+  }
+
+  return value
+})
+
+const noteFieldsSchema = {
+  title: Joi.string().min(1),
+  content: Joi.string(),
+  tag: Joi.string().valid(...TAGS),
+}
+
+export const getAllNotesSchema = {
+  [Segments.QUERY]: Joi.object({
+    page: Joi.number().integer().min(1).default(1),
+    perPage: Joi.number().integer().min(5).max(20).default(10),
+    tag: Joi.string()
+      .valid(...TAGS)
+      .optional(),
+    search: Joi.string().allow('').optional(),
   }),
-  
-};
+}
+
+export const noteIdSchema = {
+  [Segments.PARAMS]: Joi.object({
+    noteId: objectIdValidation.required(),
+  }),
+}
+
+export const createNoteSchema = {
+  [Segments.BODY]: Joi.object({
+    title: Joi.string().min(1).required(),
+    content: Joi.string().allow('').optional(),
+    tag: Joi.string()
+      .valid(...TAGS)
+      .optional(),
+  }),
+}
+
+export const updateNoteSchema = {
+  [Segments.PARAMS]: Joi.object({
+    noteId: objectIdValidation.required(),
+  }),
+
+  [Segments.BODY]: Joi.object(noteFieldsSchema).or(
+    'title',
+    'content',
+    'tag',
+  ),
+}

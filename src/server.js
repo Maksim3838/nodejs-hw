@@ -1,4 +1,3 @@
-
 import express from 'express'
 import cors from 'cors'
 import 'dotenv/config'
@@ -11,6 +10,7 @@ import { logger } from './middleware/logger.js'
 import { notFoundHandler } from './middleware/notFoundHandler.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import notesRouter from './routes/notesRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 
 const app = express()
 const PORT = process.env.PORT ?? 3000
@@ -18,10 +18,11 @@ const PORT = process.env.PORT ?? 3000
 app.use(logger)
 app.use(express.json())
 app.use(cookieParser())
-app.use(cors({origin:"*"}))
+app.use(cors({ origin: '*' }))
 
 app.use(notesRouter)
 app.use('/auth', authRoutes)
+app.use(userRoutes)
 
 app.use(errors())
 

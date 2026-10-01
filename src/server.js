@@ -21,12 +21,11 @@ app.use(cookieParser())
 app.use(cors({ origin: '*' }))
 
 app.use(notesRouter)
-app.use('/auth', authRoutes)
+app.use(authRoutes)
 app.use(userRoutes)
 
-app.use(errors())
-
 app.use(notFoundHandler)
+app.use(errors())
 app.use(errorHandler)
 
 await connectMongoDB()

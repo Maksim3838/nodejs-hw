@@ -23,7 +23,7 @@
     "http-errors": "^2.0.1",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.6.0",
-    "mongoose": "^9.10.2",
+    "mongoose": "^9.10.3",
     "multer": "^2.4.0",
     "nodemailer": "^10.0.13",
     "pino-http": "^10.5.0",
